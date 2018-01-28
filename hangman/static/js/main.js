@@ -1,10 +1,5 @@
 var used = [];
 
-
-function init_data() {
-    
-}
-
 function checkWord() {
 
     var val = $('#guess').val();
@@ -24,6 +19,7 @@ function checkWord() {
         $('#word').val(data['word']);
         if(data['result'] === 'Won'){
             alert("Congratulations!! You Won the Game let's play again");
+            $('#won').text((parseInt($('#won').text())+1).toString());
             start();
             return
         }
@@ -51,6 +47,7 @@ function start() {
 function lost() {
     alert("You Lost the game let's play again");
     $.ajax('/lost').done(function(data) {
+        $('#lost').text((parseInt($('#lost').text())+1).toString());
         start();
     });
 }

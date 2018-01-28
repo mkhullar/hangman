@@ -54,17 +54,19 @@ def restricted():
 @login_required
 def hangman():
     games = Stats.query.filter_by(user=session['username']).all()
-    guess = ''
+    guess = '_*_*_*_*_'
     win = 0
     loss = 0
+    attempt_left = 10
     for game in games:
         if game.win == 'Game On':
             guess = game.attempt
+            attempt_left = game.attempt_left
         if game.win == 'Won':
             win += 1
         if game.win == 'Lost':
             loss += 1
-    return render_template("index.html", attempt=guess, won=win, lost=loss)
+    return render_template("index.html", attempt=guess, won=win, lost=loss, attempt_left=attempt_left)
 
 
 @main.route('/start', methods=["GET", "POST"])
@@ -75,10 +77,10 @@ def start():
     else:
         finish_games()
         full_word = get_random()
-        attempt_word = ''.join(['_ '] * len(full_word[0].word))
+        attempt_word = ''.join(['_ '] * len(full_word[0].word)).strip().replace(' ', '*')
         db.session.add(Stats(session['username'], attempt_word, full_word[0].word, 10, 'Game On', time.time()))
         db.session.commit()
-        return jsonify(word=''.join(['_ '] * len(full_word[0].word)))
+        return jsonify(word=attempt_word)
 
 
 @main.route('/checkWord', methods=["GET", "POST"])
@@ -86,30 +88,32 @@ def start():
 def check_word():
     character = request.args.get('w').upper()
     attempt_left = request.args.get('attempt_left').upper()
-    game = Stats.query.filter_by(user=session['username']).filter_by(win='Game On').one()
-    guess_word = game.attempt.strip().split(' ')
-    result = 'Incorrect'
-    for index in [i for i, ch in enumerate(game.word) if ch == character]:
-        guess_word[index] = character
-        result = 'Correct'
+    games = Stats.query.filter_by(user=session['username']).filter_by(win='Game On').all()
+    if len(games) > 0:
+        game = games[0]
+        guess_word = game.attempt.strip().split('*')
+        result = 'Incorrect'
+        for index in [i for i, ch in enumerate(game.word) if ch == character]:
+            guess_word[index] = character
+            result = 'Correct'
 
-    db.session.query(Stats).filter_by(user=session['username']). \
-        filter_by(win='Game On').update({'attempt': ' '.join(guess_word)})
-    db.session.commit()
-
-    if '_' not in guess_word:
         db.session.query(Stats).filter_by(user=session['username']). \
-            filter_by(win='Game On').update({'win': 'Won'})
+            filter_by(win='Game On').update({'attempt': '*'.join(guess_word)})
         db.session.commit()
-        return jsonify(word=' '.join(guess_word), result='Won')
 
-    if result == 'Incorrect':
-        db.session.query(Stats).filter_by(user=session['username']). \
-            filter_by(win='Game On').update({'attempt_left': int(attempt_left) - 1})
-        db.session.commit()
-        attempt_left = str(int(attempt_left) - 1)
+        if '_' not in guess_word:
+            db.session.query(Stats).filter_by(user=session['username']). \
+                filter_by(win='Game On').update({'win': 'Won'})
+            db.session.commit()
+            return jsonify(word=' '.join(guess_word), result='Won')
 
-    return jsonify(word=' '.join(guess_word), result=result, attempt_left=attempt_left)
+        if result == 'Incorrect':
+            db.session.query(Stats).filter_by(user=session['username']). \
+                filter_by(win='Game On').update({'attempt_left': int(attempt_left) - 1})
+            db.session.commit()
+            attempt_left = str(int(attempt_left) - 1)
+        return jsonify(word=' '.join(guess_word), result=result, attempt_left=attempt_left)
+    return redirect(request.args.get("next") or url_for(".start"))
 
 
 @main.route('/lost', methods=["GET", "POST"])
