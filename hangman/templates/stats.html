@@ -1,0 +1,39 @@
+{%extends "base.html"%}
+
+{%block title%}Sats{% endblock %}
+
+{%block body%}
+    <div class="container">
+        <table class="table" style="width:100%">
+            <TR>
+                <TH>User Name</TH>
+                <TH>Attempted Word</TH>
+                <TH>Solution</TH>
+                <TH>Result</TH>
+            </TR>
+            {% for game in games %}
+                <TR>
+
+                    {% if game.win == 'Won' %}
+                        <TD class="success">{{ game.user }}</TD>
+                        <TD class="success">{{ game.attempt }}</TD>
+                        <TD class="success">{{ game.word }}</TD>
+                        <TD class="success">{{ game.win }}</TD>
+                    {% elif game.win == 'Lost'  %}
+                        <TD class="danger">{{ game.user }}</TD>
+                        <TD class="danger">{{ game.attempt }}</TD>
+                        <TD class="danger">{{ game.word }}</TD>
+                        <TD class="danger">{{ game.win }}</TD>
+                    {%  else %}
+                        <TD class="active">{{ game.user }}</TD>
+                        <TD class="active">{{ game.attempt }}</TD>
+                        <TD class="active">{{ game.word }}</TD>
+                        <TD class="active">{{ game.win }}</TD>
+                    {% endif %}
+
+                </TR>
+            {% endfor %}
+
+        </table>
+    </div>
+{%endblock%}
