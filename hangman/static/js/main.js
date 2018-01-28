@@ -1,4 +1,16 @@
 var used = [];
+var canvas = $('#hangman-playground');
+var context = canvas[0].getContext("2d");
+
+
+function init_hangman() {
+    var done = parseInt($('#attempts').text());
+    for(var i = 9;i >=done; i--){
+        draw_hanging_man(i);
+    }
+}
+
+window.onload = init_hangman;
 
 function checkWord() {
 
@@ -28,9 +40,12 @@ function checkWord() {
             //draw_hangman();
             $('#attempts').text(data['attempt_left'].toString());
         }
+        draw_hanging_man(parseInt($('#attempts').text()));
+
         if($('#attempts').text() === '0'){
             lost();
             }
+
     });
 
 }
@@ -41,6 +56,9 @@ function start() {
      $.ajax('/start').done(function(data) {
         $('#guess').val('');
         $('#word').val(data['word']);
+        canvas = $('#hangman-playground');
+        context = canvas[0].getContext('2d');
+        context.clearRect(0, 0, canvas[0].width, canvas[0].height);
     });
 }
 
@@ -52,3 +70,67 @@ function lost() {
     });
 }
 
+
+function draw_hanging_man(attempt_left){
+    if(attempt_left === 9){
+      context.beginPath();
+      context.lineWidth = 7;
+      context.moveTo(0, 250);
+      context.lineTo(100, 250);
+      context.strokeStyle = '#000000';
+      context.stroke();
+    } else if (attempt_left === 8){
+      context.beginPath();
+      context.lineWidth = 7;
+      context.moveTo(50, 250);
+      context.lineTo(50,25);
+      context.stroke();
+    } else if (attempt_left === 7){
+      context.beginPath();
+      context.lineWidth = 7;
+      context.moveTo(50, 25);
+      context.lineTo(200,25);
+      context.stroke();
+    } else if(attempt_left === 6){
+      context.beginPath();
+      context.lineWidth = 7;
+      context.moveTo(200, 25);
+      context.lineTo(200,50);
+      context.stroke();
+    } else if(attempt_left === 5){
+      context.beginPath();
+      context.lineWidth = 7;
+      context.arc(200, 75, 25, 2 * Math.PI, 0);
+      context.stroke();
+   } else if(attempt_left === 4){
+      context.beginPath();
+     context.lineWidth = 7;
+      context.moveTo(200,100);
+      context.lineTo(200,150);
+      context.stroke();
+   } else if(attempt_left === 3){
+      context.beginPath();
+     context.lineWidth = 7;
+      context.moveTo(200,150);
+      context.lineTo(150,200);
+      context.stroke();
+   } else if(attempt_left === 2){
+      context.beginPath();
+     context.lineWidth = 7;
+      context.moveTo(200,150);
+      context.lineTo(250,200);
+      context.stroke();
+   } else if(attempt_left === 1){
+      context.beginPath();
+     context.lineWidth = 7;
+      context.moveTo(200,125);
+      context.lineTo(250,175);
+      context.stroke();
+   } else if(attempt_left === 0){
+      context.beginPath();
+      context.lineWidth = 7;
+      context.moveTo(200,125);
+      context.lineTo(150,175);
+      context.stroke();
+   }
+  }
