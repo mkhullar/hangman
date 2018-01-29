@@ -15,13 +15,13 @@ class ProdConfig(Config):
 
 class DevConfig(Config):
     ENV = 'dev'
-    #DEBUG = True
+    DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
     SQLALCHEMY_DATABASE_URI = "postgresql:///hangman_data"
 
     CACHE_TYPE = 'null'
-    #ASSETS_DEBUG = True
+    ASSETS_DEBUG = True
 
 
 class TestConfig(Config):
