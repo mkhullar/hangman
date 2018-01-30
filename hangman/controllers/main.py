@@ -147,6 +147,13 @@ def stats():
     return render_template("stats.html", games=game_list)
 
 
+@main.route('/rules', methods=["GET", "POST"])
+@login_required
+def rules():
+    """ Get the detailed Rules about the game """
+    return render_template("rules.html")
+
+
 @main.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404

@@ -1,0 +1,18 @@
+{%extends "base.html"%}
+
+{%block title%}Rules{% endblock %}
+
+{%block body%}
+    <div class="container">
+        <h1>Hangman - Rules:</h1>
+        <h3>Hangman is a word guessing game.</h3>
+        <UL>
+            <li><h4>When the game is started, the player is represented with an empty field for each letter in the word.</h4></li>
+            <li><h4>When the player guesses a letter correctly, each field that represents that letter is filled with the letter.</h4></li>
+            <li><h4>When the player guesses a letter incorrectly, a piece of a gallow with a hanging man is drawn.</h4></li>
+            <li><h4>After 10 incorrect guesses, the game is over and the player lost. Thus, there should be 10 different states of the gallow to be drawn.</h4></li>
+            <li><h4>If all fields are filled with their letter before 10 incorrect guesses, the player has won the game.</h4></li>
+            <li><h4>" _ " represents a word and " * " is only used as a separator in the words.</h4></li>
+        </UL>
+    </div>
+{%endblock%}
