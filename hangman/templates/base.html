@@ -40,16 +40,17 @@
             {% if not current_user.is_authenticated() %}
                 <li><a class="navbar-brand" href="{{ url_for('.logon') }}">Sign Up</a></li>
             {% endif %}
-            {% if not current_user.is_authenticated() %}
-                <li><a href="{{ url_for('.login') }}">Login</a></li>
-            {% else %}
-                <li><a href="{{ url_for('.logout') }}">Logout</a></li>
-            {% endif %}
+
             {% if current_user.is_authenticated() %}
                 <li><a href="{{ url_for('.stats') }}">Stats</a></li>
             {% endif %}
             {% if current_user.is_authenticated() %}
                 <li><a href="{{ url_for('.rules') }}">Rules</a></li>
+            {% endif %}
+            {% if not current_user.is_authenticated() %}
+                <li><a href="{{ url_for('.login') }}">Login</a></li>
+            {% else %}
+                <li><a href="{{ url_for('.logout') }}">Logout</a></li>
             {% endif %}
         </ul>
     </div><!--/.nav-collapse -->
