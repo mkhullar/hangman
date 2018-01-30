@@ -10,7 +10,12 @@ function init_hangman() {
     }
 }
 
+history.pushState(null, null, document.title);
+window.addEventListener('popstate', function () {
+    history.pushState(null, null, document.title);
+});
 window.onload = init_hangman;
+
 
 function checkWord() {
 

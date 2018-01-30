@@ -26,6 +26,7 @@ def logon():
 
 @main.route("/login", methods=["GET", "POST"])
 def login():
+    """ Login the user and set the session variable of username """
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -39,7 +40,10 @@ def login():
 
 @main.route("/logout")
 def logout():
+    """ Logout of the application and remove the session data """
     logout_user()
+    if is_logged_in():
+        session.pop('username')
     flash("You have been logged out.", "success")
     return redirect(url_for(".home"))
 
@@ -53,6 +57,7 @@ def restricted():
 @main.route('/hangman', methods=["GET", "POST"])
 @login_required
 def hangman():
+    """ If a user comes back after a while return the state to the previous state """
     games = Stats.query.filter_by(user=session['username']).all()
     guess = '_*_*_*_*_'
     win = 0
@@ -72,9 +77,11 @@ def hangman():
 @main.route('/start', methods=["GET", "POST"])
 @login_required
 def start():
+    """ check if the user is logged in """
     if not is_logged_in():
         return redirect(url_for(".login"))
     else:
+        """ Mark previous game as Incomplete and start a new Game """
         finish_games()
         full_word = get_random()
         attempt_word = ''.join(['_ '] * len(full_word[0].word)).strip().replace(' ', '*')
@@ -86,6 +93,7 @@ def start():
 @main.route('/checkWord', methods=["GET", "POST"])
 @login_required
 def check_word():
+    """ check for the character if it is present in the original word """
     character = request.args.get('w').upper()
     attempt_left = request.args.get('attempt_left').upper()
     games = Stats.query.filter_by(user=session['username']).filter_by(win='Game On').all()
@@ -119,6 +127,7 @@ def check_word():
 @main.route('/lost', methods=["GET", "POST"])
 @login_required
 def lost():
+    """ Mark the current game as lost """
     db.session.query(Stats).filter_by(user=session['username']). \
         filter_by(win='Game On').update({'win': 'Lost'})
     db.session.commit()
@@ -128,6 +137,7 @@ def lost():
 @main.route('/stats', methods=["GET", "POST"])
 @login_required
 def stats():
+    """ Get the detailed Statistics about win, lose and incomplete games """
     games = Stats.query.filter_by(user=session['username']).all()
     game_list = list()
     for game in games:
@@ -143,6 +153,7 @@ def page_not_found(e):
 
 
 def get_random():
+    """ Get a random word from the database of dictionary """
     return Dictionary.query.options(load_only('word')).offset(
         func.floor(
             func.random() *
@@ -152,10 +163,12 @@ def get_random():
 
 
 def is_logged_in():
+    """ check if the user is logged in """
     return 'username' in session
 
 
 def finish_games():
+    """ Mark the previous game as Incomplete to start a new game """
     db.session.query(Stats).filter_by(user=session['username']). \
         filter_by(win='Game On').update({'win': 'Incomplete'})
     db.session.commit()
