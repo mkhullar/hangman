@@ -40,7 +40,6 @@
             {% if not current_user.is_authenticated() %}
                 <li><a class="navbar-brand" href="{{ url_for('.logon') }}">Sign Up</a></li>
             {% endif %}
-
             {% if current_user.is_authenticated() %}
                 <li><a href="{{ url_for('.stats') }}">Stats</a></li>
             {% endif %}
